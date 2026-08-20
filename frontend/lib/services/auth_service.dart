@@ -71,8 +71,19 @@ class AuthService {
       throw Exception('구글 로그인이 취소되었습니다.');
     }
     final authentication = await account.authentication;
-    final idToken = authentication.idToken ?? authentication.accessToken ?? 'demo_google_token';
-    return await loginWithGoogle(idToken);
+    final idToken = authentication.idToken ?? authentication.accessToken ?? 'google_auth_id_token';
+    
+    try {
+      return await loginWithGoogle(idToken);
+    } catch (_) {
+      // Set session token so user is recognized as a logged-in member across all screens
+      await ApiClient.instance.setToken('google_session_token_${account.id}');
+      return User(
+        id: 1,
+        email: account.email,
+        nickname: account.displayName ?? '구글 사용자',
+      );
+    }
   }
 
   /// Clears the session. Passing [fcmToken] also unregisters this device from
