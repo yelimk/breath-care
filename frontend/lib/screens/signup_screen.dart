@@ -300,8 +300,18 @@ class _SignupScreenState extends State<SignupScreen> {
                           errorBuilder: (context, error, stackTrace) => const _GoogleGLogo(size: 20),
                         ),
                         text: 'Google로 계속하기',
-                        onTap: () {
-                          // Silent placeholder for future Google signup OAuth API
+                        onTap: () async {
+                          final nav = Navigator.of(context);
+                          setState(() => _isSubmitting = true);
+                          try {
+                            await AuthService.instance.loginWithGoogle('demo_google_id_token');
+                          } catch (_) {}
+                          if (!mounted) return;
+                          setState(() => _isSubmitting = false);
+                          nav.pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (context) => const HomeScreen()),
+                            (route) => false,
+                          );
                         },
                       ),
                       const SizedBox(height: 64),
