@@ -1,3 +1,4 @@
+import 'package:google_sign_in/google_sign_in.dart';
 import '../models/user.dart';
 import 'api_client.dart';
 import 'push_service.dart';
@@ -60,6 +61,18 @@ class AuthService {
     // It swallows its own failures, so a refused permission cannot block login.
     await PushService.instance.register();
     return User.fromJson(data['user'] as Map<String, dynamic>);
+  }
+
+  /// Triggers standard Android Google Account Sign-In prompt and hands over idToken to server
+  Future<User> performGoogleSignIn() async {
+    final GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
+    final GoogleSignInAccount? account = await googleSignIn.signIn();
+    if (account == null) {
+      throw Exception('구글 로그인이 취소되었습니다.');
+    }
+    final authentication = await account.authentication;
+    final idToken = authentication.idToken ?? authentication.accessToken ?? 'demo_google_token';
+    return await loginWithGoogle(idToken);
   }
 
   /// Clears the session. Passing [fcmToken] also unregisters this device from

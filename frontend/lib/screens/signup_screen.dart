@@ -299,12 +299,12 @@ class _SignupScreenState extends State<SignupScreen> {
                           height: 22,
                           errorBuilder: (context, error, stackTrace) => const _GoogleGLogo(size: 20),
                         ),
-                        text: 'Google로 계속하기',
+                        text: 'Google로 시작하기',
                         onTap: () async {
                           final nav = Navigator.of(context);
                           setState(() => _isSubmitting = true);
                           try {
-                            await AuthService.instance.loginWithGoogle('demo_google_id_token');
+                            await AuthService.instance.performGoogleSignIn();
                           } catch (_) {}
                           if (!mounted) return;
                           setState(() => _isSubmitting = false);

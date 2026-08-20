@@ -244,7 +244,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           final nav = Navigator.of(context);
                           setState(() => _isSubmitting = true);
                           try {
-                            await AuthService.instance.loginWithGoogle('demo_google_id_token');
+                            await AuthService.instance.performGoogleSignIn();
                           } catch (_) {}
                           if (!mounted) return;
                           setState(() => _isSubmitting = false);
