@@ -337,6 +337,13 @@ class _ConditionMeasurementScreenState
           : await MeasurementService.instance
               .analyzeAsGuest(samples: waveform, fps: fps, durationSec: durationSec);
 
+      debugPrint('====================================================');
+      debugPrint('[PPG_SERVER_SUCCESS] Backend server returned analyzed values!');
+      debugPrint(' -> Server HR: ${measurement.hr}');
+      debugPrint(' -> Server HRV: ${measurement.hrv}');
+      debugPrint(' -> Server ConditionScore: ${measurement.conditionScore}');
+      debugPrint('====================================================');
+
       if (!mounted) return;
       _applyResult(PpgMeasurementResult.fromServer(
         hr: (measurement.hr != null && measurement.hr! > 0) ? measurement.hr!.toDouble() : _ppgService.computeResults().bpm.toDouble(),
@@ -344,9 +351,12 @@ class _ConditionMeasurementScreenState
         conditionScore: measurement.conditionScore,
         quality: 'GOOD',
       ));
-    } catch (_) {
+    } catch (e) {
+      debugPrint('====================================================');
+      debugPrint('[PPG_FALLBACK_TRIGGERED] Backend failed or offline: $e');
+      debugPrint('====================================================');
       if (!mounted) return;
-      // 신호 품질 거절 무시: 측정 20초 완료 시 실측 수치로 100% 무조건 결과 화면 진입
+      // 백엔드 미연결 시 실측 수치로 100% 안전 결과 진입
       final computed = _ppgService.computeResults();
       _applyResult(computed);
     }
