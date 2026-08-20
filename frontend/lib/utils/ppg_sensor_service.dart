@@ -58,14 +58,6 @@ class PpgMeasurementResult {
       serverConditionScore?.round() ??
       (hrvSdnnMs * 1.4 + 40).clamp(50.0, 96.0).round();
 
-  int get stressIndex =>
-      ((bpm / 1.3) + (50 - hrvSdnnMs * 0.7)).clamp(15.0, 95.0).round();
-
-  String get stressStatusText {
-    if (stressIndex < 35) return '낮음';
-    if (stressIndex < 65) return '보통';
-    return '높음';
-  }
 
   factory PpgMeasurementResult.defaultSample() {
     return PpgMeasurementResult(
