@@ -90,7 +90,10 @@ class AuthService {
 
       await ApiClient.instance.setToken('google_session_token_${account.id}', user: user);
       return user;
-    } catch (_) {
+    } catch (e) {
+      debugPrint('====================================================');
+      debugPrint('[GOOGLE_OAUTH_ERROR] Google Sign-In failed: $e');
+      debugPrint('====================================================');
       const fallbackUser = User(
         id: 1,
         email: 'yelim.google@gmail.com',
