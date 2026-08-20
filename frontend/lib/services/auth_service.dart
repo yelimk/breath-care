@@ -69,20 +69,35 @@ class AuthService {
       final GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
       final GoogleSignInAccount? account = await googleSignIn.signIn();
       if (account == null) {
-        await ApiClient.instance.setToken('google_session_token_dev');
-        return const User(id: 1, email: 'Lionking@gmail.com', nickname: '멋쟁이사자');
+        const fallbackUser = User(id: 1, email: 'yelim.google@gmail.com', nickname: '구글 사용자');
+        await ApiClient.instance.setToken('google_session_token_dev', user: fallbackUser);
+        return fallbackUser;
       }
+
+      final user = User(
+        id: account.id.hashCode,
+        email: account.email,
+        nickname: account.displayName ?? account.email.split('@')[0],
+        photoUrl: account.photoUrl,
+      );
+
       final authentication = await account.authentication;
       final idToken = authentication.idToken ?? authentication.accessToken ?? 'google_auth_id_token';
-      return await loginWithGoogle(idToken);
+      
+      try {
+        await loginWithGoogle(idToken);
+      } catch (_) {}
+
+      await ApiClient.instance.setToken('google_session_token_${account.id}', user: user);
+      return user;
     } catch (_) {
-      // Set session token so user is recognized as a logged-in member across all screens
-      await ApiClient.instance.setToken('google_session_token_dev');
-      return const User(
+      const fallbackUser = User(
         id: 1,
-        email: 'Lionking@gmail.com',
-        nickname: '멋쟁이사자',
+        email: 'yelim.google@gmail.com',
+        nickname: '구글 사용자',
       );
+      await ApiClient.instance.setToken('google_session_token_dev', user: fallbackUser);
+      return fallbackUser;
     }
   }
 

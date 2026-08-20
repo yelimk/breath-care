@@ -121,9 +121,9 @@ class _MyPageScreenState extends State<MyPageScreen> {
                         ),
                       ),
                       child: ClipOval(
-                        child: _isLoggedIn
-                            ? Image.asset(
-                                'assets/images/user_avatar.png',
+                        child: (_isLoggedIn && ApiClient.instance.currentUser?.photoUrl != null)
+                            ? Image.network(
+                                ApiClient.instance.currentUser!.photoUrl!,
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) => const Icon(
                                   Icons.person_rounded,
@@ -143,7 +143,9 @@ class _MyPageScreenState extends State<MyPageScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          _isLoggedIn ? '멋쟁이사자' : 'GUEST',
+                          _isLoggedIn
+                              ? (ApiClient.instance.currentUser?.displayName ?? '구글 사용자')
+                              : 'GUEST',
                           style: const TextStyle(
                             fontFamily: AppFonts.pretendard,
                             fontSize: 20,
@@ -153,7 +155,9 @@ class _MyPageScreenState extends State<MyPageScreen> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          _isLoggedIn ? 'Lionking@gmail.com' : '로그인 / 회원가입하기 >',
+                          _isLoggedIn
+                              ? (ApiClient.instance.currentUser?.email ?? 'google@gmail.com')
+                              : '로그인 / 회원가입하기 >',
                           style: const TextStyle(
                             fontFamily: AppFonts.pretendard,
                             fontSize: 14,

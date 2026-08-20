@@ -19,6 +19,8 @@ import 'api_exception.dart';
 ///
 /// Callers never see that wrapper. They get `data` back, or an [ApiException]
 /// carrying the server's own `code` and Korean `message`.
+import '../models/user.dart';
+
 class ApiClient {
   ApiClient._();
 
@@ -27,6 +29,7 @@ class ApiClient {
   static const String _tokenKey = 'access_token';
 
   String? _accessToken;
+  User? currentUser;
 
   /// Called when the server rejects our token. Set this once at startup to
   /// send the user back to the login screen.
@@ -41,10 +44,14 @@ class ApiClient {
     _accessToken = prefs.getString(_tokenKey);
   }
 
-  Future<void> setToken(String? token) async {
+  Future<void> setToken(String? token, {User? user}) async {
     _accessToken = token;
+    if (user != null) {
+      currentUser = user;
+    }
     final prefs = await SharedPreferences.getInstance();
     if (token == null) {
+      currentUser = null;
       await prefs.remove(_tokenKey);
     } else {
       await prefs.setString(_tokenKey, token);
