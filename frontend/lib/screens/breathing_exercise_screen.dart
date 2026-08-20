@@ -529,8 +529,10 @@ class _BreathingExerciseScreenState extends State<BreathingExerciseScreen>
     _overlayTimer?.cancel();
     _cycleStopwatch.stop();
     _animController.dispose();
-    _audioPlayer?.stop();
-    _audioPlayer?.dispose();
+    try {
+      _audioPlayer?.stop();
+      _audioPlayer?.dispose();
+    } catch (_) {}
     super.dispose();
   }
 
