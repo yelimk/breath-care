@@ -69,3 +69,4 @@ app.*.map.json
 
 # Windows related
 windows/flutter/ephemeral/
+.vercel
